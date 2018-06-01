@@ -7,3 +7,7 @@ functions:
     lang: python
     handler: ./render
     image: alexcourouble/render
+  assets:
+    lang: python
+    handler: ./assets
+    image: alexcourouble/assets
