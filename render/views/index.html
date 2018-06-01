@@ -12,20 +12,20 @@
     integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
     crossorigin=""></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js" crossorigin=""></script>
- <style>
-     #mapid { height: 580px; }
-    .navbar-brand {
-        padding: 10px;
-    }
-    .navbar-brand img {
-        height: 30px
-    }
-    @media (min-width: 768px) {
-        .navbar-text {
-        margin-left: 5px;
+    <style>
+        #mapid { height: 580px; }
+        .navbar-brand {
+            padding: 10px;
         }
-    }
-</style>
+        .navbar-brand img {
+            height: 30px
+        }
+        @media (min-width: 768px) {
+            .navbar-text {
+            margin-left: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -42,53 +42,67 @@
     <script>
         var sf = [37.784172, -122.401558];
         var mymap = L.map('mapid').setView(sf, 16);
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var mylocation = [position.coords.latitude,position.coords.longitude];
-                mymap.setView(mylocation, 16);
-                console.log("Location found at: "+sf)
-                $("#action").text("Found location.")
-                var circle = L.circle(mylocation, {
-                    color: 'red',
-                    fillColor: '#f03',
-                    fillOpacity: 0.3,
-                    radius: 200
-                }).bindPopup("You are here").addTo(mymap);
+        // if(navigator.geolocation) {
+        //     navigator.geolocation.getCurrentPosition(function(position) {
+        //         var mylocation = [position.coords.latitude,position.coords.longitude];
+        //         mymap.setView(mylocation, 16);
+        //         console.log("Location found at: "+sf)
+        //         $("#action").text("Found location.")
+        //         var circle = L.circle(mylocation, {
+        //             color: 'red',
+        //             fillColor: '#f03',
+        //             fillOpacity: 0.3,
+        //             radius: 200
+        //         }).bindPopup("You are here").addTo(mymap);
                 
-                L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(mymap);
-                var filter = "Drinking Fountain";
-                // var filter = "Trash Can";
-                var assetsUrl = "/assets"
-                if(document.URL.indexOf("/function/") > -1) {
-                    assetsUrl = "/function/alexellis-assets"
-                }
-                $.get(assetsUrl + "?map_label=" + encodeURI(filter), function(data) {
-                    var markers = L.markerClusterGroup();
-                    for(var i=0;i<=data.length-1;i++) {
-                        var marker = L.marker([data[i].lat, data[i].lng]);
-                        marker.bindPopup(data[i]["Map Label"]  + " - " + data[i]["Asset Name"] + " (" +  data[i]["Quantity"] +")");
-                        markers.addLayer(marker);
-                    }
-                    mymap.addLayer(markers);
-                });
-            });
-        } else {
-            mymap.setView(sf, 16);
-            console.log("Default location at: "+sf)
-            $("#action").text("Location unavailable.")
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(mymap);
-            var filter = "Trash Can";
-            $.get("URLassets?map_label=" + encodeURI(filter), function(data) {
-                for(var i=0;i<=data.length-1;i++) {
-                    L.marker([data[i].lat, data[i].lng]).addTo(mymap)
-                    .bindPopup(data[i]["Map Label"]  + " - " + data[i]["Asset Name"] + " (" +  data[i]["Quantity"] +")");
-                }
-            });
-        }
+        //         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        //             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        //         }).addTo(mymap);
+        //         var filter = "Drinking Fountain";
+        //         // var filter = "Trash Can";
+        //         var assetsUrl = "/assets"
+        //         if(document.URL.indexOf("/function/") > -1) {
+        //             assetsUrl = "/function/alexellis-assets"
+        //         }
+        //         $.get(assetsUrl + "?map_label=" + encodeURI(filter), function(data) {
+        //             var markers = L.markerClusterGroup();
+        //             for(var i=0;i<=data.length-1;i++) {
+        //                 var marker = L.marker([data[i].lat, data[i].lng]);
+        //                 marker.bindPopup(data[i]["Map Label"]  + " - " + data[i]["Asset Name"] + " (" +  data[i]["Quantity"] +")");
+        //                 markers.addLayer(marker);
+        //             }
+        //             mymap.addLayer(markers);
+        //         });
+        //     });
+        // } else {
+        //     mymap.setView(sf, 16);
+        //     console.log("Default location at: "+sf)
+        //     $("#action").text("Location unavailable.")
+        //     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        //         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        //     }).addTo(mymap);
+        //     var filter = "Trash Can";
+        //     $.get("URLassets?map_label=" + encodeURI(filter), function(data) {
+        //         for(var i=0;i<=data.length-1;i++) {
+        //             L.marker([data[i].lat, data[i].lng]).addTo(mymap)
+        //             .bindPopup(data[i]["Map Label"]  + " - " + data[i]["Asset Name"] + " (" +  data[i]["Quantity"] +")");
+        //         }
+        //     });
+        // }
+
+        mymap.setView(sf, 16);
+        console.log("Default location at: "+sf)
+        $("#action").text("Location unavailable.")
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mymap);
+        var filter = "Trash Can";
+        $.get("URLassets?map_label=" + encodeURI(filter), function(data) {
+            for(var i=0;i<=data.length-1;i++) {
+                L.marker([data[i].lat, data[i].lng]).addTo(mymap)
+                .bindPopup(data[i]["Map Label"]  + " - " + data[i]["Asset Name"] + " (" +  data[i]["Quantity"] +")");
+            }
+        });
     </script>
 </body>
 
