@@ -3,5 +3,5 @@ def handle(req):
     Args:
         req (str): request body
     """
-
-    return req
+    with open("function/views/index.html") as f:
+        return f.read()
