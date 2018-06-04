@@ -4,10 +4,10 @@ provider:
 
 functions:
   render:
-    lang: python
+    lang: python3
     handler: ./render
     image: alexcourouble/render
   assets:
-    lang: python
+    lang: python3
     handler: ./assets
     image: alexcourouble/assets
