@@ -25,22 +25,37 @@
             margin-left: 5px;
             }
         }
+        a {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
 
-    <div class="panel panel-success">
-        <div class="panel-heading">SF Data Browser</div>
-        <div class="panel-body">
-            <span id="action">Finding location..</span>
-            <div id="mapid"></div>
-            <p>Powered by OpenFaaS &reg;</p>
+        <div class="panel panel-success">
+            <div class="panel-heading">SF Data Browser</div>
+            <div class="panel-body">
+                <span id="action">Finding location..</span>
+                <div id="mapid"></div>
+                <p>Powered by OpenFaaS &reg;</p>
+            </div>
         </div>
+
+        <div class="list-group" id="asset-list">
+            <a class="list-group-item list-group-item-action" onclick="changeLayer('Drinking Fountain')">Drinking Fountain</a>
+            <a class="list-group-item list-group-item-action" onclick="changeLayer('Trash Can')">Trash Can</a>
+            <a class="list-group-item list-group-item-action" onclick="changeLayer('Bench')">Bench</a>
+            <a class="list-group-item list-group-item-action" onclick="changeLayer('Picnic Table')">Picnic Table</a>
+            <a class="list-group-item list-group-item-action" onclick="changeLayer('Cargo Container')">Cargo Container</a>
+        </div>
+
     </div>
+
 
     <script>
 
+        // San Francisco coordinates, incase user doesn't share location
         var sf = [37.784172, -122.401558];
         var mymap = L.map('mapid').setView(sf, 16);
 
@@ -59,35 +74,53 @@
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(mymap);
 
-        // list of possible assets to display
-        var assets = ["Drinking Fountain", "Drinking Fountain"] 
+        
         
         // TODO: User chooses filter from list
         var filter = "Drinking Fountain";
 
-        var assetsUrl = "/assets"
+        var assetsUrl = "/assets";
         if(document.URL.indexOf("/function/") > -1) {
-            assetsUrl = "/function/alexellis-assets"
+            assetsUrl = "/function/assets";
         }
 
-        console.log("====================================================")
-        console.log(assetsUrl + "?map_label=" + encodeURI(filter))
-        console.log(assetsUrl + "?map_label=" + encodeURI(filter))
-        console.log(assetsUrl + "?map_label=" + encodeURI(filter))
-        console.log(assetsUrl + "?map_label=" + encodeURI(filter))
-        console.log("====================================================")
+
+        // // list of possible assets to display
+        // var assetsArray = ["Drinking Fountain", "Trash Can", "Bench", "Picnic Table", "Cargo Container"];
+
+        // // Programmatically creating the list of available assets
+        // for (var index in assetsArray) {
+            
+        //     // creating element
+        //     var listElement = '<a class="list-group-item" id="asset' + index +' ">' + assetsArray[index] + '</a>';
+            
+        //     //appending element to the list
+        //     $("#asset-list").append(listElement);
+            
+        //     // // adding onClick event
+        //     // $("#asset" + index).on("click", changeLayer(assetsArray[index]));
+        // }
 
 
-        // get request to s
-        $.get(assetsUrl + "?map_label=" + encodeURI(filter), function(data) {
-            var markers = L.markerClusterGroup();
-            for(var i=0;i<=data.length-1;i++) {
-                var marker = L.marker([data[i].lat, data[i].lng]);
-                marker.bindPopup(data[i]["Map Label"]  + " - " + data[i]["Asset Name"] + " (" +  data[i]["Quantity"] +")");
-                markers.addLayer(marker);
-            }
-            mymap.addLayer(markers);
-        });
+        function changeLayer(filter) {
+            $.get(assetsUrl + "?map_label=" + encodeURI(filter), function(data) {
+
+                var markers = L.markerClusterGroup();
+
+                // Converting the response string to JSON
+                jsonData = JSON.parse(data);
+
+                // Itterating the json object and creating the markers on the map
+                for(var i=0; i<=jsonData.length-1; i++) {
+                    var marker = L.marker([jsonData[i].lat, jsonData[i].lng]);
+                    marker.bindPopup(jsonData[i]["Map Label"]  + " - " + jsonData[i]["Asset Name"] + " (" +  jsonData[i]["Quantity"] +")");
+                    markers.addLayer(marker);
+                }
+
+                // adding the markers on the map
+                mymap.addLayer(markers);
+            });
+        }
 
 
 
@@ -156,6 +189,7 @@
         //         }
         //     });
         // }
+
     </script>
 </body>
 
